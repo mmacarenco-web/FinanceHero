@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FinanceHero — Assuma o Controle do Seu Dinheiro em 5 Minutos</title>
+<meta name="description" content="O sistema financeiro gamificado que te força a não esquecer de lançar despesas, define metas e ainda usa IA para te dar dicas personalizadas.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏆</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #0a0a0f;
+  --bg2:     #111118;
+  --bg3:     #1a1a24;
+  --bg4:     #22222e;
+  --border:  rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --text:    #f0f0f8;
+  --text2:   #9090a8;
+  --text3:   #5a5a70;
+  --accent:  #7c6af7;
+  --accent2: #a594ff;
+  --green:   #34d399;
+  --red:     #f87171;
+  --amber:   #fbbf24;
+  --pink:    #f472b6;
+  --gold:    #ffd700;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+h1,h2,h3,h4 { font-family: 'Syne', sans-serif; line-height: 1.15; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+/* ── UTILITIES ── */
+.container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+.accent { color: var(--accent2); }
+.green { color: var(--green); }
+.tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(124,106,247,0.12); border: 1px solid rgba(124,106,247,0.25);
+  border-radius: 20px; padding: 6px 14px;
+  font-size: 12px; font-weight: 600; color: var(--accent2);
+  text-transform: uppercase; letter-spacing: .08em;
+}
+
+/* ── NOISE OVERLAY ── */
+body::before {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity: 0.4;
+}
+
+/* ── NAVBAR ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 16px 0;
+  background: rgba(10,10,15,0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  transition: padding .3s;
+}
+nav.scrolled { padding: 10px 0; }
+.nav-inner {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo {
+  font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800;
+  display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--text);
+}
+.nav-logo-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent), var(--pink));
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+}
+.nav-links { display: flex; align-items: center; gap: 32px; }
+.nav-links a {
+  font-size: 13px; font-weight: 500; color: var(--text2);
+  text-decoration: none; transition: color .2s; letter-spacing: .02em;
+}
+.nav-links a:hover { color: var(--text); }
+.btn-cta {
+  background: linear-gradient(135deg, var(--accent), var(--pink));
+  color: #fff; border: none; border-radius: 10px;
+  padding: 12px 24px; font-family: 'Syne', sans-serif;
+  font-size: 13px; font-weight: 700; cursor: pointer;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+  transition: all .2s; white-space: nowrap;
+  box-shadow: 0 4px 20px rgba(124,106,247,0.35);
+}
+.btn-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(124,106,247,0.5); }
+.btn-cta:active { transform: translateY(0); }
+.nav-mobile-btn { display: none; background: none; border: none; color: var(--text); font-size: 22px; cursor: pointer; }
+
+/* ── BANNER PROMO ── */
+.promo-bar {
+  background: linear-gradient(90deg, rgba(124,106,247,0.15), rgba(244,114,182,0.1), rgba(124,106,247,0.15));
+  border-bottom: 1px solid rgba(124,106,247,0.2);
+  padding: 10px 0; text-align: center; font-size: 13px;
+  position: fixed; top: 69px; left: 0; right: 0; z-index: 99;
+}
+.promo-bar span { color: var(--text2); }
+.promo-bar strong { color: var(--text); }
+.promo-bar .price-old { color: var(--text3); text-decoration: line-through; margin-right: 4px; }
+.promo-bar .price-new { color: var(--green); font-weight: 700; font-size: 15px; }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh; display: flex; align-items: center;
+  padding: 160px 0 100px; position: relative; overflow: hidden;
+}
+.hero-glow {
+  position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
+  width: 800px; height: 800px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(124,106,247,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-glow2 {
+  position: absolute; bottom: -100px; right: -200px;
+  width: 500px; height: 500px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(244,114,182,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-inner { text-align: center; position: relative; z-index: 1; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: 30px; padding: 8px 16px; margin-bottom: 32px;
+  font-size: 13px; color: var(--text2);
+}
+.hero-badge-avatars { display: flex; }
+.hero-badge-avatars span {
+  width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--bg2);
+  background: linear-gradient(135deg, var(--accent), var(--pink));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; margin-left: -6px; font-weight: 700;
+}
+.hero-badge-avatars span:first-child { margin-left: 0; }
+.stars { color: var(--gold); font-size: 12px; letter-spacing: 1px; }
+.hero h1 {
+  font-size: clamp(40px, 6vw, 72px);
+  font-weight: 800; margin-bottom: 24px;
+  max-width: 820px; margin-left: auto; margin-right: auto;
+}
+.hero-sub {
+  font-size: clamp(16px, 2vw, 20px); color: var(--text2);
+  max-width: 560px; margin: 0 auto 40px; line-height: 1.7;
+}
+.hero-actions { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.btn-cta-hero {
+  background: linear-gradient(135deg, var(--accent), var(--pink));
+  color: #fff; border: none; border-radius: 14px;
+  padding: 18px 40px; font-family: 'Syne', sans-serif;
+  font-size: 17px; font-weight: 800; cursor: pointer;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 10px;
+  transition: all .25s; letter-spacing: .01em;
+  box-shadow: 0 8px 40px rgba(124,106,247,0.45);
+  animation: pulse-btn 2.5s ease-in-out infinite;
+}
+@keyframes pulse-btn {
+  0%,100% { box-shadow: 0 8px 40px rgba(124,106,247,0.45); }
+  50% { box-shadow: 0 8px 60px rgba(124,106,247,0.7); }
+}
+.btn-cta-hero:hover { transform: translateY(-3px) scale(1.02); }
+.hero-garantias { display: flex; gap: 24px; font-size: 13px; color: var(--text3); }
+.hero-garantias span { display: flex; align-items: center; gap: 6px; }
+.hero-garantias .ic { color: var(--green); }
+
+/* ── MOCKUP PREVIEW ── */
+.mockup-section {
+  padding: 40px 0 100px; position: relative;
+}
+.mockup-wrap {
+  position: relative; max-width: 900px; margin: 0 auto;
+}
+.mockup-glow {
+  position: absolute; inset: -40px;
+  background: radial-gradient(ellipse at 50% 60%, rgba(124,106,247,0.2) 0%, transparent 70%);
+  pointer-events: none;
+}
+.mockup-frame {
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: 20px; overflow: hidden;
+  box-shadow: 0 40px 120px rgba(0,0,0,0.6);
+  position: relative;
+}
+.mockup-bar {
+  background: var(--bg3); padding: 12px 16px;
+  display: flex; align-items: center; gap: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.dot { width: 10px; height: 10px; border-radius: 50%; }
+.dot.r { background: #f87171; } .dot.y { background: #fbbf24; } .dot.g { background: #34d399; }
+.mockup-content { padding: 24px; }
+.mock-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 20px; }
+.mock-stat {
+  background: var(--bg3); border-radius: 12px; padding: 14px;
+  border-top: 3px solid;
+}
+.mock-stat.g { border-color: var(--green); }
+.mock-stat.r { border-color: var(--red); }
+.mock-stat.a { border-color: var(--amber); }
+.mock-stat.b { border-color: #60a5fa; }
+.mock-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 6px; }
+.mock-val { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; }
+.mock-val.g { color: var(--green); } .mock-val.r { color: var(--red); }
+.mock-val.a { color: var(--amber); } .mock-val.b { color: #60a5fa; }
+.mock-row { display: grid; grid-template-columns: 1fr 280px; gap: 16px; }
+.mock-tx { background: var(--bg3); border-radius: 12px; padding: 16px; }
+.mock-tx-title { font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 12px; }
+.mock-tx-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.mock-tx-item:last-child { border-bottom: none; }
+.mock-tx-dot { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.mock-tx-dot.d { background: rgba(248,113,113,0.15); }
+.mock-tx-dot.r { background: rgba(52,211,153,0.15); }
+.mock-tx-info { flex: 1; }
+.mock-tx-name { font-size: 12px; font-weight: 500; }
+.mock-tx-cat { font-size: 10px; color: var(--text3); }
+.mock-tx-val { font-size: 12px; font-weight: 700; }
+.mock-tx-val.d { color: var(--red); } .mock-tx-val.r { color: var(--green); }
+.mock-right { display: flex; flex-direction: column; gap: 16px; }
+.mock-xp { background: var(--bg3); border-radius: 12px; padding: 16px; }
+.mock-xp-top { display: flex; justify-content: space-between; font-size: 11px; color: var(--text2); margin-bottom: 8px; }
+.mock-bar { height: 6px; background: var(--bg4); border-radius: 3px; overflow: hidden; }
+.mock-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 3px; width: 68%; }
+.mock-level { display: inline-flex; align-items: center; gap: 6px; background: rgba(124,106,247,0.15); border-radius: 20px; padding: 4px 10px; font-size: 11px; color: var(--accent2); font-weight: 600; margin-top: 8px; }
+.mock-streak { background: linear-gradient(135deg, rgba(124,106,247,0.2), rgba(244,114,182,0.15)); border: 1px solid rgba(124,106,247,0.3); border-radius: 12px; padding: 14px; display: flex; gap: 10px; align-items: center; }
+.mock-streak-num { font-family: 'Syne', sans-serif; font-size: 32px; font-weight: 800; color: var(--accent2); line-height: 1; }
+.mock-streak-info { font-size: 11px; color: var(--text2); }
+.mock-streak-info strong { color: var(--text); font-size: 13px; display: block; margin-bottom: 2px; }
+
+/* ── SEÇÕES GERAIS ── */
+section { padding: 100px 0; position: relative; }
+.section-tag { text-align: center; margin-bottom: 16px; }
+.section-title {
+  font-size: clamp(28px, 4vw, 48px); font-weight: 800;
+  text-align: center; margin-bottom: 16px;
+}
+.section-sub {
+  font-size: 17px; color: var(--text2); text-align: center;
+  max-width: 560px; margin: 0 auto 64px; line-height: 1.7;
+}
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border2), transparent);
+  margin: 0;
+}
+
+/* ── PROBLEMA ── */
+.problema-section { background: var(--bg2); }
+.problema-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+.problema-card {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 16px; padding: 24px;
+  position: relative; overflow: hidden;
+  transition: border-color .2s, transform .2s;
+}
+.problema-card:hover { border-color: var(--border2); transform: translateY(-4px); }
+.problema-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--pink));
+  opacity: 0; transition: opacity .2s;
+}
+.problema-card:hover::before { opacity: 1; }
+.problema-icon { font-size: 32px; margin-bottom: 16px; }
+.problema-title { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+.problema-desc { font-size: 14px; color: var(--text2); line-height: 1.7; }
+
+/* ── BENEFÍCIOS ── */
+.beneficios-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 16px; }
+.beneficio-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px; padding: 28px; display: flex; gap: 20px;
+  transition: border-color .2s, transform .2s;
+}
+.beneficio-card:hover { border-color: rgba(124,106,247,0.3); transform: translateY(-2px); }
+.beneficio-icon-wrap {
+  width: 52px; height: 52px; border-radius: 14px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 24px;
+}
+.beneficio-icon-wrap.purple { background: rgba(124,106,247,0.15); }
+.beneficio-icon-wrap.green  { background: rgba(52,211,153,0.15); }
+.beneficio-icon-wrap.amber  { background: rgba(251,191,36,0.15); }
+.beneficio-icon-wrap.pink   { background: rgba(244,114,182,0.15); }
+.beneficio-icon-wrap.blue   { background: rgba(96,165,250,0.15); }
+.beneficio-icon-wrap.red    { background: rgba(248,113,113,0.15); }
+.beneficio-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+.beneficio-desc { font-size: 14px; color: var(--text2); line-height: 1.6; }
+
+/* ── COMO FUNCIONA ── */
+.como-section { background: var(--bg2); }
+.steps { display: flex; flex-direction: column; gap: 0; max-width: 680px; margin: 0 auto; }
+.step {
+  display: flex; gap: 24px; align-items: flex-start;
+  padding: 32px 0; border-bottom: 1px solid var(--border);
+  position: relative;
+}
+.step:last-child { border-bottom: none; }
+.step-num {
+  width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--accent), var(--pink));
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800;
+  box-shadow: 0 4px 16px rgba(124,106,247,0.4);
+}
+.step-body h3 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+.step-body p { font-size: 14px; color: var(--text2); line-height: 1.7; }
+.step-badge {
+  display: inline-flex; align-items: center; gap: 4px; margin-top: 8px;
+  background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.2);
+  border-radius: 20px; padding: 3px 10px; font-size: 11px; color: var(--green); font-weight: 600;
+}
+
+/* ── GAMIFICAÇÃO DESTAQUE ── */
+.gami-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+.gami-badges { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+.gami-badge {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 16px; text-align: center;
+  transition: all .2s;
+}
+.gami-badge:hover { border-color: rgba(124,106,247,0.3); transform: translateY(-3px); }
+.gami-badge.unlocked { border-color: rgba(124,106,247,0.35); background: rgba(124,106,247,0.06); }
+.gami-badge-icon { font-size: 28px; margin-bottom: 6px; }
+.gami-badge-name { font-size: 11px; font-weight: 600; color: var(--text2); }
+.gami-badge-xp { font-size: 10px; color: var(--accent2); margin-top: 2px; }
+.gami-text h2 { font-size: clamp(26px,3.5vw,40px); font-weight: 800; margin-bottom: 16px; }
+.gami-text p { font-size: 16px; color: var(--text2); line-height: 1.7; margin-bottom: 20px; }
+.gami-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.gami-list li { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--text2); }
+.gami-list .ic { color: var(--accent2); font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+/* ── DEPOIMENTOS ── */
+.depo-section { background: var(--bg2); }
+.depo-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+.depo-card {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 16px; padding: 24px;
+  transition: border-color .2s;
+}
+.depo-card:hover { border-color: rgba(124,106,247,0.3); }
+.depo-stars { color: var(--gold); font-size: 14px; margin-bottom: 14px; letter-spacing: 2px; }
+.depo-text { font-size: 14px; color: var(--text2); line-height: 1.7; margin-bottom: 20px; font-style: italic; }
+.depo-author { display: flex; align-items: center; gap: 10px; }
+.depo-avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; flex-shrink: 0;
+}
+.depo-name { font-size: 13px; font-weight: 600; }
+.depo-role { font-size: 11px; color: var(--text3); }
+
+/* ── FAQ ── */
+.faq-list { max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+.faq-item {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 14px; overflow: hidden;
+}
+.faq-q {
+  padding: 18px 20px; cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 15px; font-weight: 500; gap: 12px;
+  transition: background .15s;
+}
+.faq-q:hover { background: var(--bg3); }
+.faq-toggle { font-size: 20px; color: var(--accent2); flex-shrink: 0; transition: transform .2s; }
+.faq-item.open .faq-toggle { transform: rotate(45deg); }
+.faq-a {
+  padding: 0 20px; max-height: 0; overflow: hidden;
+  font-size: 14px; color: var(--text2); line-height: 1.7;
+  transition: max-height .3s ease, padding .3s ease;
+}
+.faq-item.open .faq-a { max-height: 200px; padding: 0 20px 18px; }
+
+/* ── PRICING ── */
+.price-section { background: var(--bg2); }
+.price-card {
+  max-width: 480px; margin: 0 auto;
+  background: var(--bg3); border: 1px solid rgba(124,106,247,0.3);
+  border-radius: 24px; padding: 40px; text-align: center;
+  position: relative; overflow: hidden;
+  box-shadow: 0 0 60px rgba(124,106,247,0.12);
+}
+.price-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--pink));
+}
+.price-badge {
+  display: inline-block; background: linear-gradient(135deg, var(--accent), var(--pink));
+  color: #fff; border-radius: 20px; padding: 4px 16px;
+  font-size: 12px; font-weight: 700; margin-bottom: 24px;
+  text-transform: uppercase; letter-spacing: .08em;
+}
+.price-from { font-size: 14px; color: var(--text3); margin-bottom: 4px; }
+.price-old-val { font-size: 22px; color: var(--text3); text-decoration: line-through; margin-bottom: 4px; }
+.price-val {
+  font-family: 'Syne', sans-serif; font-size: 64px; font-weight: 800;
+  color: var(--text); line-height: 1; margin-bottom: 4px;
+}
+.price-val sup { font-size: 28px; vertical-align: super; }
+.price-desc { font-size: 13px; color: var(--text3); margin-bottom: 32px; }
+.price-features { list-style: none; margin-bottom: 32px; display: flex; flex-direction: column; gap: 12px; text-align: left; }
+.price-features li { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--text2); }
+.price-features .ic { color: var(--green); flex-shrink: 0; }
+.price-btn {
+  display: block; width: 100%;
+  background: linear-gradient(135deg, var(--accent), var(--pink));
+  color: #fff; border: none; border-radius: 14px;
+  padding: 18px; font-family: 'Syne', sans-serif;
+  font-size: 16px; font-weight: 800; cursor: pointer;
+  text-decoration: none; transition: all .25s;
+  box-shadow: 0 6px 30px rgba(124,106,247,0.4);
+  letter-spacing: .02em;
+  animation: pulse-btn 2.5s ease-in-out infinite;
+}
+.price-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 40px rgba(124,106,247,0.6); }
+.price-garantia {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  margin-top: 16px; font-size: 13px; color: var(--text3);
+}
+.price-garantia .ic { color: var(--green); }
+
+/* ── URGÊNCIA ── */
+.urgencia {
+  background: linear-gradient(135deg, rgba(124,106,247,0.12), rgba(244,114,182,0.08));
+  border-top: 1px solid rgba(124,106,247,0.2);
+  border-bottom: 1px solid rgba(124,106,247,0.2);
+  padding: 60px 0; text-align: center;
+}
+.countdown { display: flex; justify-content: center; gap: 16px; margin: 28px 0; }
+.count-block { text-align: center; }
+.count-num {
+  font-family: 'Syne', sans-serif; font-size: 48px; font-weight: 800;
+  background: linear-gradient(135deg, var(--accent2), var(--pink));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  line-height: 1;
+}
+.count-sep { font-size: 40px; color: var(--text3); padding-top: 4px; }
+.count-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .1em; margin-top: 4px; }
+
+/* ── FOOTER ── */
+footer {
+  padding: 48px 0 32px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+.footer-logo { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; justify-content: center; }
+.footer-sub { font-size: 13px; color: var(--text3); margin-bottom: 24px; }
+.footer-links { display: flex; gap: 24px; justify-content: center; margin-bottom: 24px; }
+.footer-links a { font-size: 13px; color: var(--text3); text-decoration: none; transition: color .2s; }
+.footer-links a:hover { color: var(--text2); }
+.footer-copy { font-size: 12px; color: var(--text3); }
+
+/* ── ANIMAÇÕES DE ENTRADA ── */
+.reveal {
+  opacity: 0; transform: translateY(30px);
+  transition: opacity .6s ease, transform .6s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: .1s; }
+.reveal-delay-2 { transition-delay: .2s; }
+.reveal-delay-3 { transition-delay: .3s; }
+.reveal-delay-4 { transition-delay: .4s; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .problema-grid { grid-template-columns: 1fr; gap: 14px; }
+  .beneficios-grid { grid-template-columns: 1fr; }
+  .gami-grid { grid-template-columns: 1fr; }
+  .gami-badges { order: -1; }
+  .depo-grid { grid-template-columns: 1fr; }
+  .mock-stats { grid-template-columns: repeat(2,1fr); }
+  .mock-row { grid-template-columns: 1fr; }
+  .mock-right { display: none; }
+  .nav-links { display: none; }
+  .nav-mobile-btn { display: block; }
+  .hero { padding-top: 140px; }
+}
+@media (max-width: 600px) {
+  .hero h1 { font-size: 34px; }
+  .hero-garantias { flex-direction: column; gap: 8px; align-items: center; }
+  .gami-badges { grid-template-columns: repeat(3,1fr); }
+  .countdown { gap: 8px; }
+  .count-num { font-size: 36px; }
+  .price-val { font-size: 52px; }
+  .price-card { padding: 28px 20px; }
+  section { padding: 70px 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="container nav-inner">
+    <a href="#" class="nav-logo">
+      <div class="nav-logo-icon">🏆</div>
+      FinanceHero
+    </a>
+    <div class="nav-links">
+      <a href="#beneficios">Benefícios</a>
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#depoimentos">Depoimentos</a>
+      <a href="#faq">Dúvidas</a>
+    </div>
+    <a href="#preco" class="btn-cta">Garantir Acesso →</a>
+    <button class="nav-mobile-btn" onclick="document.querySelector('.nav-links').style.display = document.querySelector('.nav-links').style.display === 'flex' ? 'none' : 'flex'">☰</button>
+  </div>
+</nav>
+
+<!-- BANNER PROMO -->
+<div class="promo-bar">
+  🔥 <span>Oferta especial: de</span> <span class="price-old">R$ 197,00</span> <span>por apenas</span> <span class="price-new">R$ 67,00</span>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="container hero-inner">
+    <div class="hero-badge reveal">
+      <div class="hero-badge-avatars">
+        <span>P</span><span>M</span><span>R</span><span>J</span>
+      </div>
+      <span class="stars">★★★★★</span>
+      <span>Mais de 5.427 usuários satisfeitos</span>
+    </div>
+    <h1 class="reveal reveal-delay-1">
+      Pare de se perguntar <em style="color:var(--text2);font-style:normal">'para onde foi meu dinheiro'</em> e assuma o controle total em <span class="accent">5 minutos</span>
+    </h1>
+    <p class="hero-sub reveal reveal-delay-2">
+      O sistema financeiro gamificado que te força a registrar tuas despesas, define metas com progresso visual e ainda usa <strong>IA para te dar dicas personalizadas</strong> do seu perfil.
+    </p>
+    <div class="hero-actions reveal reveal-delay-3">
+      <a href="#preco" class="btn-cta-hero">
+        🚀 SIM! QUERO O SISTEMA COMPLETO →
+      </a>
+      <div class="hero-garantias">
+        <span><span class="ic">✓</span> Acesso Vitalício</span>
+        <span><span class="ic">✓</span> Garantia de 7 dias</span>
+        <span><span class="ic">✓</span> Funciona no celular</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MOCKUP PREVIEW -->
+<div class="mockup-section">
+  <div class="container">
+    <div class="mockup-wrap reveal">
+      <div class="mockup-glow"></div>
+      <div class="mockup-frame">
+        <div class="mockup-bar">
+          <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+          <span style="font-size:12px;color:var(--text3);margin-left:8px">FinanceHero — Dashboard</span>
+        </div>
+        <div class="mockup-content">
+          <div class="mock-stats">
+            <div class="mock-stat g"><div class="mock-label">Receitas (mês)</div><div class="mock-val g">R$ 4.800</div></div>
+            <div class="mock-stat r"><div class="mock-label">Despesas</div><div class="mock-val r">R$ 2.340</div></div>
+            <div class="mock-stat a"><div class="mock-label">Investimentos</div><div class="mock-val a">R$ 800</div></div>
+            <div class="mock-stat b"><div class="mock-label">Saldo líquido</div><div class="mock-val b">R$ 1.660</div></div>
+          </div>
+          <div class="mock-row">
+            <div class="mock-tx">
+              <div class="mock-tx-title">ÚLTIMAS TRANSAÇÕES</div>
+              <div class="mock-tx-item"><div class="mock-tx-dot d">❤️</div><div class="mock-tx-info"><div class="mock-tx-name">Supermercado</div><div class="mock-tx-cat">Alimentação</div></div><div class="mock-tx-val d">- R$ 320,00</div></div>
+              <div class="mock-tx-item"><div class="mock-tx-dot r">💚</div><div class="mock-tx-info"><div class="mock-tx-name">Salário</div><div class="mock-tx-cat">Receita</div></div><div class="mock-tx-val r">+ R$ 4.800,00</div></div>
+              <div class="mock-tx-item"><div class="mock-tx-dot d">❤️</div><div class="mock-tx-info"><div class="mock-tx-name">Conta de luz</div><div class="mock-tx-cat">Energia</div></div><div class="mock-tx-val d">- R$ 180,00</div></div>
+              <div class="mock-tx-item"><div class="mock-tx-dot d">❤️</div><div class="mock-tx-info"><div class="mock-tx-name">Padaria</div><div class="mock-tx-cat">Alimentação</div></div><div class="mock-tx-val d">- R$ 45,00</div></div>
+            </div>
+            <div class="mock-right">
+              <div class="mock-xp">
+                <div class="mock-xp-top"><span>⭐ Nível 3 — Controlador</span><span>680 / 1000 XP</span></div>
+                <div class="mock-bar"><div class="mock-bar-fill"></div></div>
+                <div class="mock-level">🏅 Conquistador</div>
+              </div>
+              <div class="mock-streak">
+                <div><div class="mock-streak-num">🔥 12</div><div style="font-size:10px;color:var(--text3);margin-top:2px">DIAS</div></div>
+                <div class="mock-streak-info"><strong>Streak ativo!</strong>12 dias seguidos lançando. Continue assim!</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- PROBLEMA -->
+<section class="problema-section" id="problema">
+  <div class="container">
+    <div class="section-tag reveal"><span class="tag">😓 Você se identifica?</span></div>
+    <h2 class="section-title reveal reveal-delay-1">Esses problemas te parecem familiares?</h2>
+    <p class="section-sub reveal reveal-delay-2">A maioria das pessoas sofre com os mesmos 3 problemas financeiros — e todos têm solução.</p>
+    <div class="problema-grid">
+      <div class="problema-card reveal reveal-delay-1">
+        <div class="problema-icon">💸</div>
+        <div class="problema-title">Dinheiro some sem explicação</div>
+        <div class="problema-desc">Você recebe o salário, paga as contas e em 2 semanas já está no limite — sem saber onde gastou.</div>
+      </div>
+      <div class="problema-card reveal reveal-delay-2">
+        <div class="problema-icon">😰</div>
+        <div class="problema-title">Tentou planilhas e desistiu</div>
+        <div class="problema-desc">Já baixou app, usou planilha, tentou anotar num caderno. Funciona 3 dias e abandona porque é chato e trabalhoso.</div>
+      </div>
+      <div class="problema-card reveal reveal-delay-3">
+        <div class="problema-icon">🚫</div>
+        <div class="problema-title">Fim do mês sempre no vermelho</div>
+        <div class="problema-desc">As contas chegam, os boletos acumulam e a sensação de que nunca vai sobrar dinheiro para investir se repete todo mês.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- BENEFÍCIOS -->
+<section id="beneficios">
+  <div class="container">
+    <div class="section-tag reveal"><span class="tag">✨ A Solução</span></div>
+    <h2 class="section-title reveal reveal-delay-1">Tudo que você precisa em <span class="accent">um único sistema</span></h2>
+    <p class="section-sub reveal reveal-delay-2">O FinanceHero foi construído para tornar o controle financeiro tão viciante quanto um game.</p>
+    <div class="beneficios-grid">
+      <div class="beneficio-card reveal reveal-delay-1">
+        <div class="beneficio-icon-wrap purple">⚡</div>
+        <div>
+          <div class="beneficio-title">Lançamento Rápido em 10 segundos</div>
+          <div class="beneficio-desc">Botão fixo na tela. Digita o que gastou, valor e categoria — detectada automaticamente. Um toque e pronto.</div>
+        </div>
+      </div>
+      <div class="beneficio-card reveal reveal-delay-2">
+        <div class="beneficio-icon-wrap green">🔥</div>
+        <div>
+          <div class="beneficio-title">Streak que te força a não esquecer</div>
+          <div class="beneficio-desc">O sistema avisa se você não lançou nada hoje e mostra quantos dias consecutivos você está mantendo o hábito.</div>
+        </div>
+      </div>
+      <div class="beneficio-card reveal reveal-delay-3">
+        <div class="beneficio-icon-wrap amber">🤖</div>
+        <div>
+          <div class="beneficio-title">IA Financeira Personalizada</div>
+          <div class="beneficio-desc">Análise automática dos seus gastos com dicas práticas. Pergunte qualquer coisa — a IA responde com base nos seus dados reais.</div>
+        </div>
+      </div>
+      <div class="beneficio-card reveal reveal-delay-4">
+        <div class="beneficio-icon-wrap pink">🎯</div>
+        <div>
+          <div class="beneficio-title">Metas com barra de progresso</div>
+          <div class="beneficio-desc">Crie metas (reserva de emergência, viagem, carro) e acompanhe o progresso visual todo dia. Isso muda o comportamento.</div>
+        </div>
+      </div>
+      <div class="beneficio-card reveal reveal-delay-1">
+        <div class="beneficio-icon-wrap blue">🔄</div>
+        <div>
+          <div class="beneficio-title">Recorrências automáticas</div>
+          <div class="beneficio-desc">Aluguel, Netflix, academia — configure uma vez e o sistema lança automaticamente todo mês no dia certo.</div>
+        </div>
+      </div>
+      <div class="beneficio-card reveal reveal-delay-2">
+        <div class="beneficio-icon-wrap red">📊</div>
+        <div>
+          <div class="beneficio-title">Gráficos e relatórios visuais</div>
+          <div class="beneficio-desc">Veja para onde vai seu dinheiro com gráficos de categorias, evolução mensal e comparativo de receitas vs despesas.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- GAMIFICAÇÃO -->
+<section style="background:var(--bg)">
+  <div class="container">
+    <div class="gami-grid">
+      <div class="gami-text reveal">
+        <span class="tag" style="margin-bottom:20px;display:inline-flex">🏆 Gamificação</span>
+        <h2>Controle financeiro que vicia — <span class="accent">do jeito bom</span></h2>
+        <p>Ganha XP a cada lançamento, sobe de nível, desbloqueia conquistas e mantém seu streak. Você vai querer abrir o app todo dia.</p>
+        <ul class="gami-list">
+          <li><span class="ic">⭐</span> 6 níveis: de Iniciante a Mestre Financeiro</li>
+          <li><span class="ic">🏅</span> 10 conquistas desbloqueáveis com animação</li>
+          <li><span class="ic">🔥</span> Streak diário com bônus de XP</li>
+          <li><span class="ic">🎉</span> Confete e celebração ao subir de nível</li>
+        </ul>
+      </div>
+      <div class="gami-badges reveal reveal-delay-2">
+        <div class="gami-badge unlocked"><div class="gami-badge-icon">🌱</div><div class="gami-badge-name">Primeiro Passo</div><div class="gami-badge-xp">+20 XP</div></div>
+        <div class="gami-badge unlocked"><div class="gami-badge-icon">📈</div><div class="gami-badge-name">Em Ritmo</div><div class="gami-badge-xp">+50 XP</div></div>
+        <div class="gami-badge unlocked"><div class="gami-badge-icon">⚡</div><div class="gami-badge-name">Consistente</div><div class="gami-badge-xp">+30 XP</div></div>
+        <div class="gami-badge unlocked"><div class="gami-badge-icon">🏆</div><div class="gami-badge-name">Semana Perfeita</div><div class="gami-badge-xp">+100 XP</div></div>
+        <div class="gami-badge"><div class="gami-badge-icon" style="filter:grayscale(1)">💎</div><div class="gami-badge-name" style="color:var(--text3)">Lendário</div><div class="gami-badge-xp">+500 XP</div></div>
+        <div class="gami-badge"><div class="gami-badge-icon" style="filter:grayscale(1)">👑</div><div class="gami-badge-name" style="color:var(--text3)">Mestre</div><div class="gami-badge-xp">Nível 6</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- COMO FUNCIONA -->
+<section class="como-section" id="como-funciona">
+  <div class="container">
+    <div class="section-tag reveal"><span class="tag">🚀 Passo a passo</span></div>
+    <h2 class="section-title reveal reveal-delay-1">Configure em <span class="accent">menos de 5 minutos</span></h2>
+    <p class="section-sub reveal reveal-delay-2">Sem instalação de app. Funciona direto no navegador, no celular ou computador.</p>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h3>Acesse o sistema e configure o Supabase</h3>
+          <p>Crie uma conta gratuita no Supabase (o banco de dados), copie sua URL e chave — e cole no FinanceHero. Leva 3 minutos e você tem seus dados privados e seguros.</p>
+          <span class="step-badge">⚡ Dados 100% seus</span>
+        </div>
+      </div>
+      <div class="step reveal reveal-delay-1">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h3>Lance seu primeiro gasto em 10 segundos</h3>
+          <p>Clique no botão ⚡, escreva "Padaria" e o valor. A categoria é detectada automaticamente. Salvo. Você já ganhou seus primeiros XP.</p>
+          <span class="step-badge">🏅 Conquista desbloqueada</span>
+        </div>
+      </div>
+      <div class="step reveal reveal-delay-2">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h3>Configure suas recorrências</h3>
+          <p>Aluguel, salário, contas fixas — configure uma vez. O sistema lança automaticamente todo mês. Você não precisa lembrar de mais nada.</p>
+          <span class="step-badge">🔄 No piloto automático</span>
+        </div>
+      </div>
+      <div class="step reveal reveal-delay-3">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h3>Deixe a IA analisar seus gastos</h3>
+          <p>Depois de alguns lançamentos, clique em "Analisar minhas finanças". A IA lê seus dados reais e te dá dicas práticas personalizadas — não genéricas.</p>
+          <span class="step-badge">🤖 IA no seu bolso</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEPOIMENTOS -->
+<section id="depoimentos" class="depo-section">
+  <div class="container">
+    <div class="section-tag reveal"><span class="tag">💬 Depoimentos</span></div>
+    <h2 class="section-title reveal reveal-delay-1">O que dizem quem já usa</h2>
+    <p class="section-sub reveal reveal-delay-2">Mais de 5.427 pessoas já assumiram o controle das finanças com o FinanceHero.</p>
+    <div class="depo-grid">
+      <div class="depo-card reveal reveal-delay-1">
+        <div class="depo-stars">★★★★★</div>
+        <p class="depo-text">"Tentei 4 apps diferentes antes. O FinanceHero é o único que continuei usando porque o sistema de XP e streak me deixa motivado a abrir todo dia. Em 2 meses já economizei R$ 800."</p>
+        <div class="depo-author">
+          <div class="depo-avatar" style="background:rgba(124,106,247,0.2);color:var(--accent2)">R</div>
+          <div><div class="depo-name">Rafael M.</div><div class="depo-role">Analista de TI, São Paulo</div></div>
+        </div>
+      </div>
+      <div class="depo-card reveal reveal-delay-2">
+        <div class="depo-stars">★★★★★</div>
+        <p class="depo-text">"A função de lançamento rápido mudou tudo pra mim. Antes eu esquecia de registrar. Agora é menos de 10 segundos e ainda ganho pontos. Minha meta de reserva de emergência está em 67%!"</p>
+        <div class="depo-author">
+          <div class="depo-avatar" style="background:rgba(52,211,153,0.2);color:var(--green)">C</div>
+          <div><div class="depo-name">Camila S.</div><div class="depo-role">Professora, Belo Horizonte</div></div>
+        </div>
+      </div>
+      <div class="depo-card reveal reveal-delay-3">
+        <div class="depo-stars">★★★★★</div>
+        <p class="depo-text">"As recorrências automáticas me salvaram. Meu aluguel, Netflix, academia — tudo lançado sozinho. A IA me mostrou que eu gastava R$ 400/mês em delivery sem perceber. Choque de realidade."</p>
+        <div class="depo-author">
+          <div class="depo-avatar" style="background:rgba(251,191,36,0.2);color:var(--amber)">J</div>
+          <div><div class="depo-name">João P.</div><div class="depo-role">Designer Freelancer, Rio de Janeiro</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- URGÊNCIA / COUNTDOWN -->
+<div class="urgencia reveal">
+  <div class="container">
+    <span class="tag">⏰ Oferta por tempo limitado</span>
+    <h2 style="font-size:clamp(24px,3.5vw,40px);font-weight:800;margin:16px 0 8px">Essa condição especial expira em:</h2>
+    <p style="color:var(--text2);font-size:15px">Após o prazo, o valor volta para R$ 197,00</p>
+    <div class="countdown">
+      <div class="count-block"><div class="count-num" id="cnt-h">23</div><div class="count-label">horas</div></div>
+      <div class="count-sep">:</div>
+      <div class="count-block"><div class="count-num" id="cnt-m">47</div><div class="count-label">minutos</div></div>
+      <div class="count-sep">:</div>
+      <div class="count-block"><div class="count-num" id="cnt-s">12</div><div class="count-label">segundos</div></div>
+    </div>
+    <a href="#preco" class="btn-cta-hero" style="display:inline-flex">🔥 GARANTIR MINHA OFERTA →</a>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- PRICING -->
+<section class="price-section" id="preco">
+  <div class="container">
+    <div class="section-tag reveal"><span class="tag">💳 Investimento</span></div>
+    <h2 class="section-title reveal reveal-delay-1">Um café por mês —<br><span class="accent">para sempre no controle</span></h2>
+    <p class="section-sub reveal reveal-delay-2">Acesso vitalício. Paga uma vez, usa para sempre. Sem mensalidades.</p>
+    <div class="price-card reveal reveal-delay-2">
+      <div class="price-badge">🔥 Oferta Especial</div>
+      <div class="price-from">De</div>
+      <div class="price-old-val">R$ 197,00</div>
+      <div class="price-val"><sup>R$</sup>67</div>
+      <div class="price-desc">pagamento único · acesso vitalício</div>
+      <ul class="price-features">
+        <li><span class="ic">✓</span> Sistema completo de controle financeiro</li>
+        <li><span class="ic">✓</span> Gamificação com XP, níveis e conquistas</li>
+        <li><span class="ic">✓</span> IA Financeira para análise personalizada</li>
+        <li><span class="ic">✓</span> Metas financeiras com progresso visual</li>
+        <li><span class="ic">✓</span> Recorrências automáticas</li>
+        <li><span class="ic">✓</span> Funciona no celular e computador</li>
+        <li><span class="ic">✓</span> Seus dados privados (Supabase próprio)</li>
+        <li><span class="ic">✓</span> Atualizações incluídas</li>
+      </ul>
+      <a href="#" class="price-btn">🚀 QUERO O SISTEMA COMPLETO →</a>
+      <div class="price-garantia"><span class="ic">🛡️</span> Garantia incondicional de 7 dias</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="container">
+    <div class="section-tag reveal"><span class="tag">❓ Dúvidas</span></div>
+    <h2 class="section-title reveal reveal-delay-1">Perguntas frequentes</h2>
+    <div class="faq-list">
+      <div class="faq-item reveal reveal-delay-1">
+        <div class="faq-q" onclick="toggleFaq(this)"><span>Precisa instalar algum aplicativo?</span><span class="faq-toggle">+</span></div>
+        <div class="faq-a">Não! O FinanceHero funciona diretamente no navegador do seu celular ou computador. Basta abrir o arquivo HTML e usar. Sem instalação, sem loja de apps.</div>
+      </div>
+      <div class="faq-item reveal reveal-delay-2">
+        <div class="faq-q" onclick="toggleFaq(this)"><span>Meus dados ficam seguros?</span><span class="faq-toggle">+</span></div>
+        <div class="faq-a">Sim! Seus dados ficam no seu próprio banco de dados Supabase — não em servidor nosso. Você tem controle total. Ninguém além de você acessa suas informações financeiras.</div>
+      </div>
+      <div class="faq-item reveal reveal-delay-3">
+        <div class="faq-q" onclick="toggleFaq(this)"><span>Funciona para família ou é só para uso individual?</span><span class="faq-toggle">+</span></div>
+        <div class="faq-a">Funciona para uso individual ou familiar. Cada pessoa configura seu próprio Supabase com os dados separados. Ideal para controle pessoal ou do casal.</div>
+      </div>
+      <div class="faq-item reveal reveal-delay-1">
+        <div class="faq-q" onclick="toggleFaq(this)"><span>O que é o Supabase e preciso pagar por ele?</span><span class="faq-toggle">+</span></div>
+        <div class="faq-a">O Supabase é um banco de dados gratuito online. O plano free suporta tranquilamente todo o uso do FinanceHero — você não precisa pagar nada além do acesso ao sistema.</div>
+      </div>
+      <div class="faq-item reveal reveal-delay-2">
+        <div class="faq-q" onclick="toggleFaq(this)"><span>E se eu não gostar? Tem garantia?</span><span class="faq-toggle">+</span></div>
+        <div class="faq-a">Sim! Garantia incondicional de 7 dias. Se por qualquer motivo você não ficar satisfeito, basta entrar em contato e devolvemos 100% do seu investimento — sem perguntas.</div>
+      </div>
+      <div class="faq-item reveal reveal-delay-3">
+        <div class="faq-q" onclick="toggleFaq(this)"><span>Vou receber atualizações?</span><span class="faq-toggle">+</span></div>
+        <div class="faq-a">Sim! Como é um arquivo HTML, você recebe as atualizações e pode substituir o arquivo. Novas funcionalidades são adicionadas regularmente sem custo extra.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section style="padding:80px 0;text-align:center;background:var(--bg2)">
+  <div class="container">
+    <div class="reveal">
+      <div style="font-size:56px;margin-bottom:20px">🏆</div>
+      <h2 style="font-size:clamp(28px,4vw,48px);font-weight:800;margin-bottom:16px">Chega de chegar no fim do mês no zero.</h2>
+      <p style="font-size:17px;color:var(--text2);max-width:520px;margin:0 auto 36px;line-height:1.7">Em 5 minutos você está configurado e pronto para assumir o controle do seu dinheiro de vez.</p>
+      <a href="#preco" class="btn-cta-hero">🚀 QUERO O CONTROLE TOTAL →</a>
+      <div class="hero-garantias" style="justify-content:center;margin-top:16px">
+        <span><span class="ic">✓</span> Acesso Vitalício</span>
+        <span><span class="ic">✓</span> Garantia de 7 dias</span>
+        <span><span class="ic">✓</span> R$ 67,00 único</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-logo">🏆 FinanceHero</div>
+    <div class="footer-sub">O sistema financeiro que vicia — do jeito bom.</div>
+    <div class="footer-links">
+      <a href="#beneficios">Benefícios</a>
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#depoimentos">Depoimentos</a>
+      <a href="#faq">Dúvidas</a>
+      <a href="#preco">Garantir acesso</a>
+    </div>
+    <div class="footer-copy">© 2025 FinanceHero · Todos os direitos reservados</div>
+  </div>
+</footer>
+
+<script>
+// Navbar scroll
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// Reveal on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// FAQ toggle
+function toggleFaq(el) {
+  const item = el.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+// Countdown — reinicia em 24h a partir de agora e persiste no localStorage
+function initCountdown() {
+  const key = 'fh_landing_deadline';
+  let deadline = localStorage.getItem(key);
+  if (!deadline || Date.now() > parseInt(deadline)) {
+    deadline = Date.now() + 24 * 60 * 60 * 1000;
+    localStorage.setItem(key, deadline);
+  }
+  function tick() {
+    const diff = Math.max(0, parseInt(deadline) - Date.now());
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    document.getElementById('cnt-h').textContent = String(h).padStart(2,'0');
+    document.getElementById('cnt-m').textContent = String(m).padStart(2,'0');
+    document.getElementById('cnt-s').textContent = String(s).padStart(2,'0');
+    if (diff > 0) setTimeout(tick, 1000);
+  }
+  tick();
+}
+initCountdown();
+</script>
+</body>
+</html>
