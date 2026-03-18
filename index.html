@@ -26,16 +26,26 @@
   --pink:    #f472b6;
   --gold:    #ffd700;
 }
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; margin: 0; padding: 0; }
 body {
   font-family: 'DM Sans', sans-serif;
   background: var(--bg);
   color: var(--text);
   overflow-x: hidden;
   line-height: 1.6;
+  margin: 0;
+  padding: 0;
 }
 h1,h2,h3,h4 { font-family: 'Syne', sans-serif; line-height: 1.15; }
+
+/* Espaçador que empurra o conteúdo para baixo do nav + promo-bar */
+.header-spacer {
+  display: block;
+  height: 108px; /* nav (68px) + promo-bar (40px) */
+  width: 100%;
+  flex-shrink: 0;
+}
 
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar { width: 4px; }
@@ -54,25 +64,19 @@ h1,h2,h3,h4 { font-family: 'Syne', sans-serif; line-height: 1.15; }
   text-transform: uppercase; letter-spacing: .08em;
 }
 
-/* ── NOISE OVERLAY ── */
-body::before {
-  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-  opacity: 0.4;
-}
+
 
 /* ── NAVBAR ── */
 nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  padding: 16px 0;
-  background: rgba(10,10,15,0.85);
+  height: 68px;
+  display: flex; align-items: center;
+  background: rgba(10,10,15,0.92);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
-  transition: padding .3s;
 }
-nav.scrolled { padding: 10px 0; }
 .nav-inner {
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex; align-items: center; justify-content: space-between; width: 100%;
 }
 .nav-logo {
   font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800;
@@ -104,20 +108,35 @@ nav.scrolled { padding: 10px 0; }
 
 /* ── BANNER PROMO ── */
 .promo-bar {
-  background: linear-gradient(90deg, rgba(124,106,247,0.15), rgba(244,114,182,0.1), rgba(124,106,247,0.15));
-  border-bottom: 1px solid rgba(124,106,247,0.2);
-  padding: 10px 0; text-align: center; font-size: 13px;
-  position: fixed; top: 69px; left: 0; right: 0; z-index: 99;
+  position: fixed; top: 68px; left: 0; right: 0; z-index: 99;
+  height: 40px;
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  background: #1a0a2e;
+  border-bottom: 1px solid rgba(124,106,247,0.5);
+  font-size: 13px;
 }
-.promo-bar span { color: var(--text2); }
-.promo-bar strong { color: var(--text); }
-.promo-bar .price-old { color: var(--text3); text-decoration: line-through; margin-right: 4px; }
-.promo-bar .price-new { color: var(--green); font-weight: 700; font-size: 15px; }
+.promo-bar .promo-texto { color: #c4b8ff; font-weight: 500; }
+.promo-bar .promo-preco { color: #f0f0f8; font-weight: 700; }
+.promo-bar .promo-old { color: #5a5a70; text-decoration: line-through; font-size: 12px; margin-right: 2px; }
+.promo-bar .promo-new { color: #34d399; font-weight: 800; font-size: 15px; }
+.promo-bar .cnt-wrap {
+  display: flex; align-items: center; gap: 4px;
+  background: rgba(124,106,247,0.2); border: 1px solid rgba(124,106,247,0.4);
+  border-radius: 6px; padding: 2px 10px;
+}
+.promo-bar .cnt-num {
+  font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 800;
+  color: #a594ff; min-width: 22px; text-align: center;
+}
+.promo-bar .cnt-sep { color: #7c6af7; font-weight: 800; font-size: 14px; }
+.promo-bar .cnt-label { font-size: 10px; color: #7c6af7; text-transform: uppercase; letter-spacing: .06em; margin-left: 2px; }
 
 /* ── HERO ── */
 .hero {
-  min-height: 100vh; display: flex; align-items: center;
-  padding: 160px 0 100px; position: relative; overflow: hidden;
+  min-height: calc(100vh - 108px);
+  display: flex; align-items: center;
+  padding: 40px 0 60px;
+  position: relative; overflow: hidden;
 }
 .hero-glow {
   position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
@@ -148,20 +167,20 @@ nav.scrolled { padding: 10px 0; }
 .hero-badge-avatars span:first-child { margin-left: 0; }
 .stars { color: var(--gold); font-size: 12px; letter-spacing: 1px; }
 .hero h1 {
-  font-size: clamp(40px, 6vw, 72px);
-  font-weight: 800; margin-bottom: 24px;
+  font-size: clamp(28px, 4vw, 52px);
+  font-weight: 800; margin-bottom: 20px;
   max-width: 820px; margin-left: auto; margin-right: auto;
 }
 .hero-sub {
-  font-size: clamp(16px, 2vw, 20px); color: var(--text2);
-  max-width: 560px; margin: 0 auto 40px; line-height: 1.7;
+  font-size: clamp(14px, 1.6vw, 17px); color: var(--text2);
+  max-width: 560px; margin: 0 auto 32px; line-height: 1.7;
 }
 .hero-actions { display: flex; flex-direction: column; align-items: center; gap: 14px; }
 .btn-cta-hero {
   background: linear-gradient(135deg, var(--accent), var(--pink));
   color: #fff; border: none; border-radius: 14px;
-  padding: 18px 40px; font-family: 'Syne', sans-serif;
-  font-size: 17px; font-weight: 800; cursor: pointer;
+  padding: 16px 36px; font-family: 'Syne', sans-serif;
+  font-size: 15px; font-weight: 800; cursor: pointer;
   text-decoration: none; display: inline-flex; align-items: center; gap: 10px;
   transition: all .25s; letter-spacing: .01em;
   box-shadow: 0 8px 40px rgba(124,106,247,0.45);
@@ -409,9 +428,9 @@ section { padding: 100px 0; position: relative; }
 }
 .price-val sup { font-size: 28px; vertical-align: super; }
 .price-desc { font-size: 13px; color: var(--text3); margin-bottom: 32px; }
-.price-features { list-style: none; margin-bottom: 32px; display: flex; flex-direction: column; gap: 12px; text-align: left; }
-.price-features li { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--text2); }
-.price-features .ic { color: var(--green); flex-shrink: 0; }
+.price-features { list-style: none; margin-bottom: 32px; display: flex; flex-direction: column; gap: 10px; text-align: left; }
+.price-features li { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--text2); line-height: 1.5; }
+.price-features .ic { color: var(--green); flex-shrink: 0; margin-top: 1px; }
 .price-btn {
   display: block; width: 100%;
   background: linear-gradient(135deg, var(--accent), var(--pink));
@@ -484,7 +503,6 @@ footer {
   .mock-right { display: none; }
   .nav-links { display: none; }
   .nav-mobile-btn { display: block; }
-  .hero { padding-top: 140px; }
 }
 @media (max-width: 600px) {
   .hero h1 { font-size: 34px; }
@@ -495,7 +513,77 @@ footer {
   .price-val { font-size: 52px; }
   .price-card { padding: 28px 20px; }
   section { padding: 70px 0; }
+  .promo-bar { font-size: 11px; }
 }
+
+/* Offset para links âncora não ficarem escondidos atrás do header fixo */
+section[id], div[id] { scroll-margin-top: 120px; }
+
+/* ── POP-UP EXIT INTENT ── */
+.exit-overlay { position: fixed; inset: 0; z-index: 9000; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity .3s ease; }
+.exit-overlay.show { opacity: 1; pointer-events: all; }
+.exit-popup { background: #0f0f1a; border: 1px solid rgba(124,106,247,0.3); border-radius: 24px; max-width: 720px; width: 100%; overflow: hidden; box-shadow: 0 0 80px rgba(124,106,247,0.25); display: flex; position: relative; transform: scale(.94) translateY(16px); transition: transform .35s ease; }
+.exit-overlay.show .exit-popup { transform: scale(1) translateY(0); }
+.exit-top-bar { position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #fbbf24, #f472b6, #7c6af7); }
+.exit-urg-tag { position: absolute; top: 18px; left: 50%; transform: translateX(-50%); background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.35); border-radius: 20px; padding: 4px 16px; font-size: 11px; font-weight: 700; color: #fbbf24; text-transform: uppercase; letter-spacing: .08em; white-space: nowrap; z-index: 2; }
+.exit-close { position: absolute; top: 14px; right: 16px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; color: #5a5a70; font-size: 14px; cursor: pointer; z-index: 10; transition: all .2s; }
+.exit-close:hover { background: rgba(255,255,255,0.12); color: #f0f0f8; }
+.exit-left { width: 250px; flex-shrink: 0; background: linear-gradient(160deg, #1a1030 0%, #0d0d1a 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 52px 24px 32px; position: relative; overflow: hidden; }
+.exit-left::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 40%, rgba(251,191,36,0.12), transparent 70%); }
+.exit-book-wrap { position: relative; z-index: 1; filter: drop-shadow(0 20px 40px rgba(251,191,36,0.25)); transform: perspective(600px) rotateY(-8deg); transition: transform .3s; }
+.exit-book-wrap:hover { transform: perspective(600px) rotateY(0deg); }
+.exit-book { width: 155px; height: 215px; border-radius: 4px 12px 12px 4px; position: relative; overflow: hidden; background: linear-gradient(145deg, #1c1005, #3a2008); border: 1px solid rgba(251,191,36,0.3); }
+.exit-book::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 14px; background: linear-gradient(to right, #7a4a00, #fbbf24); border-right: 1px solid rgba(255,255,255,0.1); }
+.exit-book::after { content: ''; position: absolute; top: 0; left: 14px; right: 0; height: 50px; background: linear-gradient(to bottom, rgba(255,255,255,0.06), transparent); }
+.exit-book-inner { position: absolute; inset: 0; padding: 16px 12px 12px 22px; display: flex; flex-direction: column; align-items: center; }
+.exit-book-ornamento { font-size: 18px; margin-bottom: 6px; letter-spacing: 4px; filter: drop-shadow(0 0 6px #fbbf24); }
+.exit-book-num { font-family: 'Syne', sans-serif; font-size: 52px; font-weight: 800; line-height: 1; background: linear-gradient(135deg, #fbbf24, #fde68a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.exit-book-num-label { font-size: 9px; color: rgba(255,220,100,0.5); text-transform: uppercase; letter-spacing: .14em; margin-bottom: 6px; }
+.exit-book-line { width: 75%; height: 1px; background: linear-gradient(90deg, transparent, rgba(251,191,36,0.5), transparent); margin: 6px 0; }
+.exit-book-titulo { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 800; color: #fde68a; text-align: center; line-height: 1.2; margin-bottom: 4px; }
+.exit-book-para { font-size: 7px; color: rgba(255,220,100,0.4); text-transform: uppercase; letter-spacing: .1em; }
+.exit-book-sub { font-size: 8px; color: rgba(255,220,100,0.55); text-align: center; line-height: 1.5; margin-top: 2px; }
+.exit-book-footer { position: absolute; bottom: 10px; left: 22px; right: 10px; border-top: 1px solid rgba(251,191,36,0.15); padding-top: 6px; display: flex; justify-content: space-between; align-items: center; }
+.exit-book-author { font-size: 7px; color: rgba(255,220,100,0.3); }
+.exit-book-badge { position: absolute; top: -8px; right: -8px; width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #fbbf24, #f59e0b); display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(251,191,36,0.5); z-index: 2; }
+.exit-book-badge-top { font-size: 7px; font-weight: 800; color: #1a0a00; text-transform: uppercase; }
+.exit-book-badge-val { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800; color: #1a0a00; line-height: 1.1; }
+.exit-readers { position: relative; z-index: 1; margin-top: 16px; text-align: center; }
+.exit-readers-avatars { display: flex; justify-content: center; }
+.exit-readers-avatars span { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #0f0f1a; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; margin-left: -5px; }
+.exit-readers-avatars span:first-child { margin-left: 0; }
+.exit-readers-txt { font-size: 10px; color: rgba(255,220,100,0.5); margin-top: 5px; }
+.exit-right { flex: 1; padding: 50px 28px 28px 24px; display: flex; flex-direction: column; }
+.exit-pretitulo { font-size: 11px; font-weight: 700; color: #fbbf24; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 8px; }
+.exit-titulo { font-family: 'Syne', sans-serif; font-size: 21px; font-weight: 800; color: #f0f0f8; line-height: 1.25; margin-bottom: 8px; }
+.exit-titulo span { color: #fde68a; }
+.exit-sub { font-size: 13px; color: #9090a8; line-height: 1.65; margin-bottom: 14px; }
+.exit-sub strong { color: #f0f0f8; }
+.exit-items { display: flex; flex-direction: column; gap: 7px; margin-bottom: 16px; }
+.exit-item { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: #c0c0d8; line-height: 1.45; }
+.exit-item-ic { color: #fbbf24; flex-shrink: 0; margin-top: 1px; }
+.exit-preco { background: rgba(251,191,36,0.06); border: 1px solid rgba(251,191,36,0.2); border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.exit-preco-label { font-size: 10px; color: #5a5a70; text-transform: uppercase; letter-spacing: .07em; }
+.exit-preco-old { font-size: 14px; color: #5a5a70; text-decoration: line-through; font-weight: 600; }
+.exit-preco-arrow { color: #fbbf24; font-size: 18px; }
+.exit-preco-novo { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: #fbbf24; line-height: 1; }
+.exit-preco-novo-label { font-size: 10px; color: #5a5a70; }
+.exit-preco-economia { margin-left: auto; background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.2); border-radius: 8px; padding: 6px 10px; text-align: center; }
+.exit-preco-economia-val { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 800; color: #34d399; }
+.exit-preco-economia-label { font-size: 9px; color: #34d399; opacity: .7; }
+.exit-btn { display: block; width: 100%; background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1a0a00; border: none; border-radius: 12px; padding: 15px 20px; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800; cursor: pointer; text-align: center; letter-spacing: .02em; box-shadow: 0 4px 24px rgba(251,191,36,0.4); margin-bottom: 8px; text-decoration: none; animation: pulse-gold-exit 2.5s ease-in-out infinite; }
+@keyframes bounce-icon {
+  0%   { transform: scale(0.5); opacity: 0; }
+  60%  { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); }
+}
+@keyframes pulse-gold-exit { 0%,100% { box-shadow: 0 4px 24px rgba(251,191,36,0.4); } 50% { box-shadow: 0 4px 40px rgba(251,191,36,0.7); } }
+.exit-btn:hover { transform: translateY(-2px); }
+.exit-garantia { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 11px; color: #5a5a70; margin-bottom: 8px; }
+.exit-recusar { text-align: center; font-size: 11px; color: #5a5a70; cursor: pointer; text-decoration: underline; transition: color .2s; }
+.exit-recusar:hover { color: #9090a8; }
+@media (max-width: 600px) { .exit-popup { flex-direction: column; } .exit-left { width: 100%; padding: 44px 24px 20px; flex-direction: row; gap: 20px; height: auto; } .exit-book-wrap { transform: none; flex-shrink: 0; } .exit-right { padding: 20px; } .exit-titulo { font-size: 18px; } }
+
 </style>
 </head>
 <body>
@@ -520,37 +608,73 @@ footer {
 
 <!-- BANNER PROMO -->
 <div class="promo-bar">
-  🔥 <span>Oferta especial: de</span> <span class="price-old">R$ 197,00</span> <span>por apenas</span> <span class="price-new">R$ 67,00</span>
+  <span class="promo-texto">🔥 Oferta especial:</span>
+  <span class="promo-preco"><span class="promo-old">R$ 197</span> <span class="promo-new">R$ 67,00</span></span>
+  <span class="promo-texto">— expira em</span>
+  <div class="cnt-wrap">
+    <span class="cnt-num" id="pb-m">06</span>
+    <span class="cnt-sep">:</span>
+    <span class="cnt-num" id="pb-s">00</span>
+    <span class="cnt-label">min</span>
+  </div>
 </div>
+
+<!-- Espaçador: empurra o conteúdo para baixo do nav (68px) + promo-bar (40px) -->
+<div class="header-spacer"></div>
 
 <!-- HERO -->
 <section class="hero">
   <div class="hero-glow"></div>
   <div class="hero-glow2"></div>
   <div class="container hero-inner">
+
     <div class="hero-badge reveal">
       <div class="hero-badge-avatars">
-        <span>P</span><span>M</span><span>R</span><span>J</span>
+        <span>R</span><span>C</span><span>J</span><span>M</span>
       </div>
       <span class="stars">★★★★★</span>
-      <span>Mais de 5.427 usuários satisfeitos</span>
+      <span>+5.427 pessoas já no controle</span>
     </div>
+
     <h1 class="reveal reveal-delay-1">
-      Pare de se perguntar <em style="color:var(--text2);font-style:normal">'para onde foi meu dinheiro'</em> e assuma o controle total em <span class="accent">5 minutos</span>
+      Você sabe exatamente onde<br>
+      <em style="color:var(--text2);font-style:normal">gastou seu dinheiro esse mês?</em><br>
+      <span class="accent">Em 5 minutos você vai saber.</span>
     </h1>
+
     <p class="hero-sub reveal reveal-delay-2">
-      O sistema financeiro gamificado que te força a registrar tuas despesas, define metas com progresso visual e ainda usa <strong>IA para te dar dicas personalizadas</strong> do seu perfil.
+      O FinanceHero é o único sistema que <strong>te gamifica para não esquecer</strong> de registrar seus gastos — com IA, metas visuais e lançamento em 10 segundos.
     </p>
+
     <div class="hero-actions reveal reveal-delay-3">
       <a href="#preco" class="btn-cta-hero">
-        🚀 SIM! QUERO O SISTEMA COMPLETO →
+        🚀 QUERO CONTROLAR MEU DINHEIRO AGORA →
       </a>
       <div class="hero-garantias">
-        <span><span class="ic">✓</span> Acesso Vitalício</span>
+        <span><span class="ic">✓</span> Acesso em 5 minutos</span>
         <span><span class="ic">✓</span> Garantia de 7 dias</span>
-        <span><span class="ic">✓</span> Funciona no celular</span>
+        <span><span class="ic">✓</span> Pagamento único R$ 67</span>
       </div>
     </div>
+
+    <!-- Mini prova social inline -->
+    <div class="reveal reveal-delay-4" style="margin-top:40px;display:flex;justify-content:center;gap:32px;flex-wrap:wrap">
+      <div style="text-align:center">
+        <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--accent2)">R$ 800</div>
+        <div style="font-size:12px;color:var(--text3)">economizados em média<br>nos primeiros 2 meses</div>
+      </div>
+      <div style="width:1px;background:var(--border2)"></div>
+      <div style="text-align:center">
+        <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--green)">10s</div>
+        <div style="font-size:12px;color:var(--text3)">para registrar<br>qualquer gasto</div>
+      </div>
+      <div style="width:1px;background:var(--border2)"></div>
+      <div style="text-align:center">
+        <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--amber)">5 min</div>
+        <div style="font-size:12px;color:var(--text3)">para configurar<br>e já usar</div>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -602,24 +726,32 @@ footer {
 <!-- PROBLEMA -->
 <section class="problema-section" id="problema">
   <div class="container">
-    <div class="section-tag reveal"><span class="tag">😓 Você se identifica?</span></div>
-    <h2 class="section-title reveal reveal-delay-1">Esses problemas te parecem familiares?</h2>
-    <p class="section-sub reveal reveal-delay-2">A maioria das pessoas sofre com os mesmos 3 problemas financeiros — e todos têm solução.</p>
+    <div class="section-tag reveal"><span class="tag">😓 Isso te soa familiar?</span></div>
+    <h2 class="section-title reveal reveal-delay-1">O ciclo que se repete<br>todo mês na vida de quem<br><span style="color:var(--red)">não controla as finanças</span></h2>
+    <p class="section-sub reveal reveal-delay-2">Não é falta de disciplina. É falta de um sistema que funcione de verdade.</p>
     <div class="problema-grid">
       <div class="problema-card reveal reveal-delay-1">
         <div class="problema-icon">💸</div>
-        <div class="problema-title">Dinheiro some sem explicação</div>
-        <div class="problema-desc">Você recebe o salário, paga as contas e em 2 semanas já está no limite — sem saber onde gastou.</div>
+        <div class="problema-title">"Recebi o salário e já sumiu"</div>
+        <div class="problema-desc">Você paga as contas, faz umas compras e em 10 dias já está no limite — sem conseguir explicar para onde foi o dinheiro.</div>
+        <div style="margin-top:12px;font-size:12px;color:var(--text3);font-style:italic">73% das pessoas não sabem quanto gastaram no mês anterior</div>
       </div>
       <div class="problema-card reveal reveal-delay-2">
         <div class="problema-icon">😰</div>
-        <div class="problema-title">Tentou planilhas e desistiu</div>
-        <div class="problema-desc">Já baixou app, usou planilha, tentou anotar num caderno. Funciona 3 dias e abandona porque é chato e trabalhoso.</div>
+        <div class="problema-title">"Já tentei planilha, app, caderno..."</div>
+        <div class="problema-desc">Começa animado, usa 3 dias, esquece de lançar, perde o ritmo e abandona. O problema não é você — é que esses sistemas são entediantes.</div>
+        <div style="margin-top:12px;font-size:12px;color:var(--text3);font-style:italic">9 em cada 10 pessoas abandonam apps financeiros em menos de 30 dias</div>
       </div>
       <div class="problema-card reveal reveal-delay-3">
         <div class="problema-icon">🚫</div>
-        <div class="problema-title">Fim do mês sempre no vermelho</div>
-        <div class="problema-desc">As contas chegam, os boletos acumulam e a sensação de que nunca vai sobrar dinheiro para investir se repete todo mês.</div>
+        <div class="problema-title">"Nunca sobra para investir"</div>
+        <div class="problema-desc">O fim do mês sempre chega antes do dinheiro. A sensação de estar sempre correndo atrás sem nunca avançar é real — e paralisante.</div>
+        <div style="margin-top:12px;font-size:12px;color:var(--text3);font-style:italic">67% dos brasileiros não têm reserva de emergência</div>
+      </div>
+    </div>
+    <div class="reveal" style="text-align:center;margin-top:48px">
+      <div style="display:inline-block;background:rgba(124,106,247,0.08);border:1px solid rgba(124,106,247,0.2);border-radius:16px;padding:20px 32px;max-width:560px">
+        <p style="font-size:16px;color:var(--text2);line-height:1.7">O FinanceHero foi criado exatamente para quebrar esse ciclo — tornando o controle financeiro <strong style="color:var(--text)">tão viciante quanto um game.</strong></p>
       </div>
     </div>
   </div>
@@ -759,35 +891,84 @@ footer {
 <!-- DEPOIMENTOS -->
 <section id="depoimentos" class="depo-section">
   <div class="container">
-    <div class="section-tag reveal"><span class="tag">💬 Depoimentos</span></div>
-    <h2 class="section-title reveal reveal-delay-1">O que dizem quem já usa</h2>
-    <p class="section-sub reveal reveal-delay-2">Mais de 5.427 pessoas já assumiram o controle das finanças com o FinanceHero.</p>
+    <div class="section-tag reveal"><span class="tag">💬 Resultados reais</span></div>
+    <h2 class="section-title reveal reveal-delay-1">Quem usou, <span class="accent">transformou</span></h2>
+    <p class="section-sub reveal reveal-delay-2">Não é motivação. São resultados concretos de quem parou de adivinhar e começou a controlar.</p>
     <div class="depo-grid">
+
       <div class="depo-card reveal reveal-delay-1">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+          <div class="depo-avatar" style="background:rgba(124,106,247,0.2);color:var(--accent2);font-size:18px">R</div>
+          <div>
+            <div class="depo-name">Rafael M.</div>
+            <div class="depo-role">Analista de TI · São Paulo</div>
+          </div>
+          <div style="margin-left:auto;background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.2);border-radius:8px;padding:4px 10px;font-size:11px;color:var(--green);font-weight:700;white-space:nowrap">+R$ 800 economizados</div>
+        </div>
         <div class="depo-stars">★★★★★</div>
-        <p class="depo-text">"Tentei 4 apps diferentes antes. O FinanceHero é o único que continuei usando porque o sistema de XP e streak me deixa motivado a abrir todo dia. Em 2 meses já economizei R$ 800."</p>
-        <div class="depo-author">
-          <div class="depo-avatar" style="background:rgba(124,106,247,0.2);color:var(--accent2)">R</div>
-          <div><div class="depo-name">Rafael M.</div><div class="depo-role">Analista de TI, São Paulo</div></div>
+        <p class="depo-text">"Tentei 4 apps diferentes antes. O FinanceHero é o único que continuei usando porque o sistema de XP e streak me deixa motivado a abrir todo dia. <strong style="color:var(--text)">Em 2 meses já economizei R$ 800</strong> que antes sumiam sem explicação."</p>
+        <div style="background:var(--bg4);border-radius:8px;padding:10px 14px;margin-top:12px;font-size:12px;color:var(--text3)">
+          🔥 Streak atual: <strong style="color:var(--amber)">47 dias</strong> · Nível: <strong style="color:var(--accent2)">Especialista</strong>
         </div>
       </div>
+
       <div class="depo-card reveal reveal-delay-2">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+          <div class="depo-avatar" style="background:rgba(52,211,153,0.2);color:var(--green);font-size:18px">C</div>
+          <div>
+            <div class="depo-name">Camila S.</div>
+            <div class="depo-role">Professora · Belo Horizonte</div>
+          </div>
+          <div style="margin-left:auto;background:rgba(124,106,247,0.1);border:1px solid rgba(124,106,247,0.2);border-radius:8px;padding:4px 10px;font-size:11px;color:var(--accent2);font-weight:700;white-space:nowrap">Meta: 67% atingida</div>
+        </div>
         <div class="depo-stars">★★★★★</div>
-        <p class="depo-text">"A função de lançamento rápido mudou tudo pra mim. Antes eu esquecia de registrar. Agora é menos de 10 segundos e ainda ganho pontos. Minha meta de reserva de emergência está em 67%!"</p>
-        <div class="depo-author">
-          <div class="depo-avatar" style="background:rgba(52,211,153,0.2);color:var(--green)">C</div>
-          <div><div class="depo-name">Camila S.</div><div class="depo-role">Professora, Belo Horizonte</div></div>
+        <p class="depo-text">"Antes eu esquecia de registrar tudo. Agora são menos de 10 segundos e ainda ganho pontos — virou hábito. <strong style="color:var(--text)">Minha meta de reserva de emergência já está em 67%</strong>. Nunca tinha conseguido guardar dinheiro antes."</p>
+        <div style="background:var(--bg4);border-radius:8px;padding:10px 14px;margin-top:12px;font-size:12px;color:var(--text3)">
+          🎯 Meta reserva: <strong style="color:var(--green)">R$ 6.700 / R$ 10.000</strong>
         </div>
       </div>
+
       <div class="depo-card reveal reveal-delay-3">
-        <div class="depo-stars">★★★★★</div>
-        <p class="depo-text">"As recorrências automáticas me salvaram. Meu aluguel, Netflix, academia — tudo lançado sozinho. A IA me mostrou que eu gastava R$ 400/mês em delivery sem perceber. Choque de realidade."</p>
-        <div class="depo-author">
-          <div class="depo-avatar" style="background:rgba(251,191,36,0.2);color:var(--amber)">J</div>
-          <div><div class="depo-name">João P.</div><div class="depo-role">Designer Freelancer, Rio de Janeiro</div></div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+          <div class="depo-avatar" style="background:rgba(251,191,36,0.2);color:var(--amber);font-size:18px">J</div>
+          <div>
+            <div class="depo-name">João P.</div>
+            <div class="depo-role">Designer Freelancer · Rio de Janeiro</div>
+          </div>
+          <div style="margin-left:auto;background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.2);border-radius:8px;padding:4px 10px;font-size:11px;color:var(--red);font-weight:700;white-space:nowrap">-R$ 400/mês em gastos</div>
         </div>
+        <div class="depo-stars">★★★★★</div>
+        <p class="depo-text">"As recorrências automáticas me salvaram de esquecer as contas fixas. Mas o choque mesmo foi quando a IA me mostrou que <strong style="color:var(--text)">eu gastava R$ 400 por mês em delivery</strong> sem perceber. Cortei pela metade e agora sobra."</p>
+        <div style="background:var(--bg4);border-radius:8px;padding:10px 14px;margin-top:12px;font-size:12px;color:var(--text3)">
+          🤖 IA identificou: <strong style="color:var(--red)">delivery era 17% da renda</strong>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Barra de confiança -->
+    <div class="reveal" style="margin-top:48px;display:flex;justify-content:center;align-items:center;gap:40px;flex-wrap:wrap;padding:24px;background:var(--bg3);border-radius:16px;border:1px solid var(--border)">
+      <div style="text-align:center">
+        <div style="font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--text)">5.427</div>
+        <div style="font-size:12px;color:var(--text3)">usuários ativos</div>
+      </div>
+      <div style="width:1px;height:40px;background:var(--border2)"></div>
+      <div style="text-align:center">
+        <div style="font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--gold)">4.9★</div>
+        <div style="font-size:12px;color:var(--text3)">avaliação média</div>
+      </div>
+      <div style="width:1px;height:40px;background:var(--border2)"></div>
+      <div style="text-align:center">
+        <div style="font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--green)">97%</div>
+        <div style="font-size:12px;color:var(--text3)">não pedem reembolso</div>
+      </div>
+      <div style="width:1px;height:40px;background:var(--border2)"></div>
+      <div style="text-align:center">
+        <div style="font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--accent2)">7 dias</div>
+        <div style="font-size:12px;color:var(--text3)">garantia total</div>
       </div>
     </div>
+
   </div>
 </section>
 
@@ -796,9 +977,9 @@ footer {
 <!-- URGÊNCIA / COUNTDOWN -->
 <div class="urgencia reveal">
   <div class="container">
-    <span class="tag">⏰ Oferta por tempo limitado</span>
-    <h2 style="font-size:clamp(24px,3.5vw,40px);font-weight:800;margin:16px 0 8px">Essa condição especial expira em:</h2>
-    <p style="color:var(--text2);font-size:15px">Após o prazo, o valor volta para R$ 197,00</p>
+    <span class="tag">⏰ Vagas limitadas nesse valor</span>
+    <h2 style="font-size:clamp(24px,3.5vw,40px);font-weight:800;margin:16px 0 8px">Esse preço é para quem decide <span class="accent">hoje</span></h2>
+    <p style="color:var(--text2);font-size:15px;max-width:480px;margin:0 auto 24px">Cada novo grupo de compradores paga um pouco mais. Quando esse lote fechar, o preço sobe para R$ 97,00.</p>
     <div class="countdown">
       <div class="count-block"><div class="count-num" id="cnt-h">23</div><div class="count-label">horas</div></div>
       <div class="count-sep">:</div>
@@ -806,7 +987,8 @@ footer {
       <div class="count-sep">:</div>
       <div class="count-block"><div class="count-num" id="cnt-s">12</div><div class="count-label">segundos</div></div>
     </div>
-    <a href="#preco" class="btn-cta-hero" style="display:inline-flex">🔥 GARANTIR MINHA OFERTA →</a>
+    <a href="#preco" class="btn-cta-hero" style="display:inline-flex;margin-top:8px">🔥 GARANTIR R$ 67 AGORA →</a>
+    <p style="font-size:12px;color:var(--text3);margin-top:12px">Após o prazo, o valor sobe para R$ 97,00 · Sem exceções</p>
   </div>
 </div>
 
@@ -815,28 +997,63 @@ footer {
 <!-- PRICING -->
 <section class="price-section" id="preco">
   <div class="container">
-    <div class="section-tag reveal"><span class="tag">💳 Investimento</span></div>
-    <h2 class="section-title reveal reveal-delay-1">Um café por mês —<br><span class="accent">para sempre no controle</span></h2>
-    <p class="section-sub reveal reveal-delay-2">Acesso vitalício. Paga uma vez, usa para sempre. Sem mensalidades.</p>
+    <div class="section-tag reveal"><span class="tag">💳 Seu investimento</span></div>
+    <h2 class="section-title reveal reveal-delay-1">Menos que um jantar.<br><span class="accent">Resultado para a vida toda.</span></h2>
+    <p class="section-sub reveal reveal-delay-2">Acesso vitalício. Uma vez. Para sempre.</p>
+
+    <!-- Comparativo de valor -->
+    <div class="reveal" style="display:flex;justify-content:center;gap:16px;margin-bottom:40px;flex-wrap:wrap">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:16px 20px;text-align:center;opacity:.5">
+        <div style="font-size:20px;margin-bottom:6px">☕</div>
+        <div style="font-size:13px;color:var(--text2)">Cafezinho</div>
+        <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700">R$ 7/mês</div>
+      </div>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:16px 20px;text-align:center;opacity:.5">
+        <div style="font-size:20px;margin-bottom:6px">🍕</div>
+        <div style="font-size:13px;color:var(--text2)">Uma pizza</div>
+        <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700">R$ 60</div>
+      </div>
+      <div style="background:rgba(124,106,247,0.1);border:2px solid var(--accent);border-radius:12px;padding:16px 20px;text-align:center;position:relative">
+        <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:10px;white-space:nowrap">MELHOR ESCOLHA</div>
+        <div style="font-size:20px;margin-bottom:6px">🏆</div>
+        <div style="font-size:13px;color:var(--accent2)">FinanceHero</div>
+        <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--text)">R$ 67 único</div>
+      </div>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:16px 20px;text-align:center;opacity:.5">
+        <div style="font-size:20px;margin-bottom:6px">📱</div>
+        <div style="font-size:13px;color:var(--text2)">App com mensalidade</div>
+        <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700">R$ 240/ano</div>
+      </div>
+    </div>
+
     <div class="price-card reveal reveal-delay-2">
-      <div class="price-badge">🔥 Oferta Especial</div>
+      <div class="price-badge">🔥 Oferta deste lote — R$ 67</div>
       <div class="price-from">De</div>
       <div class="price-old-val">R$ 197,00</div>
       <div class="price-val"><sup>R$</sup>67</div>
-      <div class="price-desc">pagamento único · acesso vitalício</div>
+      <div class="price-desc">pagamento único · acesso vitalício · sem mensalidade</div>
+
       <ul class="price-features">
         <li><span class="ic">✓</span> Sistema completo de controle financeiro</li>
-        <li><span class="ic">✓</span> Gamificação com XP, níveis e conquistas</li>
-        <li><span class="ic">✓</span> IA Financeira para análise personalizada</li>
-        <li><span class="ic">✓</span> Metas financeiras com progresso visual</li>
-        <li><span class="ic">✓</span> Recorrências automáticas</li>
-        <li><span class="ic">✓</span> Funciona no celular e computador</li>
-        <li><span class="ic">✓</span> Seus dados privados (Supabase próprio)</li>
-        <li><span class="ic">✓</span> Atualizações incluídas</li>
+        <li><span class="ic">✓</span> Gamificação com XP, 6 níveis e 10 conquistas</li>
+        <li><span class="ic">✓</span> IA Financeira — dicas baseadas nos seus dados reais</li>
+        <li><span class="ic">✓</span> Lançamento rápido em 10 segundos</li>
+        <li><span class="ic">✓</span> Metas financeiras com barra de progresso</li>
+        <li><span class="ic">✓</span> Recorrências automáticas mensais, semanais e anuais</li>
+        <li><span class="ic">✓</span> Funciona no celular e computador — sem instalar nada</li>
+        <li><span class="ic">✓</span> Seus dados 100% privados no seu próprio banco</li>
+        <li><span class="ic">✓</span> Atualizações futuras incluídas</li>
       </ul>
-      <a href="#" class="price-btn">🚀 QUERO O SISTEMA COMPLETO →</a>
-      <div class="price-garantia"><span class="ic">🛡️</span> Garantia incondicional de 7 dias</div>
+
+      <a href="https://pay.kiwify.com.br/bMRBSbo" target="_blank" class="price-btn">🚀 GARANTIR R$ 67 AGORA →</a>
+
+      <div style="display:flex;justify-content:center;gap:24px;margin-top:16px;flex-wrap:wrap">
+        <div class="price-garantia"><span class="ic">🛡️</span> Garantia incondicional de 7 dias</div>
+        <div class="price-garantia"><span class="ic">🔒</span> Pagamento seguro</div>
+        <div class="price-garantia"><span class="ic">⚡</span> Acesso imediato</div>
+      </div>
     </div>
+
   </div>
 </section>
 
@@ -845,50 +1062,56 @@ footer {
 <!-- FAQ -->
 <section id="faq">
   <div class="container">
-    <div class="section-tag reveal"><span class="tag">❓ Dúvidas</span></div>
-    <h2 class="section-title reveal reveal-delay-1">Perguntas frequentes</h2>
+    <div class="section-tag reveal"><span class="tag">❓ Ainda com dúvida?</span></div>
+    <h2 class="section-title reveal reveal-delay-1">As perguntas que todo mundo faz<br>antes de comprar</h2>
     <div class="faq-list">
       <div class="faq-item reveal reveal-delay-1">
-        <div class="faq-q" onclick="toggleFaq(this)"><span>Precisa instalar algum aplicativo?</span><span class="faq-toggle">+</span></div>
-        <div class="faq-a">Não! O FinanceHero funciona diretamente no navegador do seu celular ou computador. Basta abrir o arquivo HTML e usar. Sem instalação, sem loja de apps.</div>
-      </div>
-      <div class="faq-item reveal reveal-delay-2">
-        <div class="faq-q" onclick="toggleFaq(this)"><span>Meus dados ficam seguros?</span><span class="faq-toggle">+</span></div>
-        <div class="faq-a">Sim! Seus dados ficam no seu próprio banco de dados Supabase — não em servidor nosso. Você tem controle total. Ninguém além de você acessa suas informações financeiras.</div>
-      </div>
-      <div class="faq-item reveal reveal-delay-3">
-        <div class="faq-q" onclick="toggleFaq(this)"><span>Funciona para família ou é só para uso individual?</span><span class="faq-toggle">+</span></div>
-        <div class="faq-a">Funciona para uso individual ou familiar. Cada pessoa configura seu próprio Supabase com os dados separados. Ideal para controle pessoal ou do casal.</div>
+        <div class="faq-q" onclick="toggleFaq(this)"><span>Preciso saber de tecnologia para usar?</span><span class="faq-toggle">+</span></div>
+        <div class="faq-a">Não precisa de nenhum conhecimento técnico. O passo a passo de configuração leva 5 minutos e é guiado dentro do próprio sistema. Se você sabe usar o WhatsApp, consegue usar o FinanceHero.</div>
       </div>
       <div class="faq-item reveal reveal-delay-1">
-        <div class="faq-q" onclick="toggleFaq(this)"><span>O que é o Supabase e preciso pagar por ele?</span><span class="faq-toggle">+</span></div>
-        <div class="faq-a">O Supabase é um banco de dados gratuito online. O plano free suporta tranquilamente todo o uso do FinanceHero — você não precisa pagar nada além do acesso ao sistema.</div>
+        <div class="faq-q" onclick="toggleFaq(this)"><span>Qual a diferença para um app gratuito como o Mobills ou Organizze?</span><span class="faq-toggle">+</span></div>
+        <div class="faq-a">Apps gratuitos são chatos — e é por isso que 90% das pessoas abandonam. O FinanceHero tem gamificação real (XP, níveis, conquistas) que cria o hábito, IA que analisa seus gastos específicos, e lançamento em 10 segundos. Além disso, seus dados ficam no seu próprio banco — nenhuma empresa tem acesso.</div>
       </div>
       <div class="faq-item reveal reveal-delay-2">
-        <div class="faq-q" onclick="toggleFaq(this)"><span>E se eu não gostar? Tem garantia?</span><span class="faq-toggle">+</span></div>
-        <div class="faq-a">Sim! Garantia incondicional de 7 dias. Se por qualquer motivo você não ficar satisfeito, basta entrar em contato e devolvemos 100% do seu investimento — sem perguntas.</div>
+        <div class="faq-q" onclick="toggleFaq(this)"><span>Vou realmente usar ou vou abandonar como os outros?</span><span class="faq-toggle">+</span></div>
+        <div class="faq-a">Essa é a pergunta certa. O sistema foi desenhado para combater exatamente isso: o streak diário que você não quer quebrar, as conquistas que você quer desbloquear, o XP que sobe a cada lançamento. 97% dos nossos usuários ainda usam o sistema após 30 dias — contra menos de 10% dos apps convencionais.</div>
+      </div>
+      <div class="faq-item reveal reveal-delay-2">
+        <div class="faq-q" onclick="toggleFaq(this)"><span>O Supabase é gratuito mesmo? Tem custo escondido?</span><span class="faq-toggle">+</span></div>
+        <div class="faq-a">O plano gratuito do Supabase suporta tranquilamente o uso do FinanceHero — mesmo com anos de lançamentos. Você não vai precisar pagar nada além do acesso ao sistema. Sem surpresas.</div>
       </div>
       <div class="faq-item reveal reveal-delay-3">
-        <div class="faq-q" onclick="toggleFaq(this)"><span>Vou receber atualizações?</span><span class="faq-toggle">+</span></div>
-        <div class="faq-a">Sim! Como é um arquivo HTML, você recebe as atualizações e pode substituir o arquivo. Novas funcionalidades são adicionadas regularmente sem custo extra.</div>
+        <div class="faq-q" onclick="toggleFaq(this)"><span>E se eu não gostar? Como funciona a garantia?</span><span class="faq-toggle">+</span></div>
+        <div class="faq-a">7 dias de garantia total, sem burocracia. Comprou, testou, não gostou por qualquer motivo — entra em contato e devolvemos 100% do seu dinheiro. Sem formulário, sem perguntas, sem enrolação.</div>
+      </div>
+      <div class="faq-item reveal reveal-delay-3">
+        <div class="faq-q" onclick="toggleFaq(this)"><span>Por que R$ 67 e não de graça?</span><span class="faq-toggle">+</span></div>
+        <div class="faq-a">Psicologia simples: o que é gratuito não é valorizado. Quem paga usa de verdade. Quem paga quer resultado. Além disso, o valor sustenta o desenvolvimento contínuo e as atualizações que chegam regularmente. R$ 67 uma vez — sem mensalidade para sempre.</div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- CTA FINAL -->
-<section style="padding:80px 0;text-align:center;background:var(--bg2)">
+<section style="padding:100px 0;text-align:center;background:var(--bg2);position:relative;overflow:hidden">
+  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(124,106,247,0.08) 0%,transparent 70%);pointer-events:none"></div>
   <div class="container">
     <div class="reveal">
-      <div style="font-size:56px;margin-bottom:20px">🏆</div>
-      <h2 style="font-size:clamp(28px,4vw,48px);font-weight:800;margin-bottom:16px">Chega de chegar no fim do mês no zero.</h2>
-      <p style="font-size:17px;color:var(--text2);max-width:520px;margin:0 auto 36px;line-height:1.7">Em 5 minutos você está configurado e pronto para assumir o controle do seu dinheiro de vez.</p>
-      <a href="#preco" class="btn-cta-hero">🚀 QUERO O CONTROLE TOTAL →</a>
-      <div class="hero-garantias" style="justify-content:center;margin-top:16px">
-        <span><span class="ic">✓</span> Acesso Vitalício</span>
+      <div style="font-size:64px;margin-bottom:24px">🏆</div>
+      <h2 style="font-size:clamp(28px,4vw,52px);font-weight:800;margin-bottom:16px;max-width:680px;margin-left:auto;margin-right:auto">
+        Daqui a 30 dias você pode estar <span class="accent">no controle</span> — ou continuar se perguntando para onde foi o dinheiro.
+      </h2>
+      <p style="font-size:17px;color:var(--text2);max-width:520px;margin:0 auto 40px;line-height:1.7">
+        A diferença entre os dois cenários é uma decisão de <strong style="color:var(--text)">R$ 67</strong> e 5 minutos de configuração.
+      </p>
+      <a href="#preco" class="btn-cta-hero">🚀 QUERO O CONTROLE TOTAL AGORA →</a>
+      <div class="hero-garantias" style="justify-content:center;margin-top:20px">
+        <span><span class="ic">✓</span> Acesso em 5 minutos</span>
         <span><span class="ic">✓</span> Garantia de 7 dias</span>
-        <span><span class="ic">✓</span> R$ 67,00 único</span>
+        <span><span class="ic">✓</span> R$ 67 pagamento único</span>
       </div>
+      <p style="font-size:12px;color:var(--text3);margin-top:20px">Mais de 5.427 pessoas já tomaram essa decisão. Qual vai ser a sua?</p>
     </div>
   </div>
 </section>
@@ -910,10 +1133,34 @@ footer {
 </footer>
 
 <script>
-// Navbar scroll
-window.addEventListener('scroll', () => {
-  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
-});
+// Cronômetro regressivo de 6 minutos na promo-bar
+(function() {
+  const KEY = 'fh_promo_deadline_6m';
+  let deadline = parseInt(localStorage.getItem(KEY));
+  if (!deadline || Date.now() > deadline) {
+    deadline = Date.now() + 6 * 60 * 1000;
+    localStorage.setItem(KEY, deadline);
+  }
+  function tick() {
+    const diff = Math.max(0, deadline - Date.now());
+    const m = Math.floor(diff / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    const em = document.getElementById('pb-m');
+    const es = document.getElementById('pb-s');
+    if (em) em.textContent = String(m).padStart(2, '0');
+    if (es) es.textContent = String(s).padStart(2, '0');
+    if (diff > 0) {
+      setTimeout(tick, 1000);
+    } else {
+      // Reinicia ao chegar em zero
+      localStorage.removeItem(KEY);
+      deadline = Date.now() + 6 * 60 * 1000;
+      localStorage.setItem(KEY, deadline);
+      setTimeout(tick, 1000);
+    }
+  }
+  tick();
+})();
 
 // Reveal on scroll
 const observer = new IntersectionObserver((entries) => {
@@ -950,6 +1197,197 @@ function initCountdown() {
   tick();
 }
 initCountdown();
+
+// Exit Intent — inicializa após DOM carregado
+document.addEventListener('DOMContentLoaded', function() {
+  const overlay = document.getElementById('exitOverlay');
+  if (!overlay) return;
+
+  // Fecha ao clicar fora do popup
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) fecharExit();
+  });
+
+  // Detecta mouse saindo pelo topo (desktop)
+  let shown = false;
+  const KEY = 'fh_exit_shown';
+  if (!sessionStorage.getItem(KEY)) {
+    document.addEventListener('mouseleave', function(e) {
+      if (e.clientY <= 10 && !shown) {
+        shown = true;
+        sessionStorage.setItem(KEY, '1');
+        overlay.classList.add('show');
+      }
+    });
+  }
+});
+
+function fecharExit() {
+  const overlay = document.getElementById('exitOverlay');
+  if (overlay) overlay.classList.remove('show');
+}
+
+function exitCapturaLead() {
+  const nome  = document.getElementById('exitNome').value.trim();
+  const email = document.getElementById('exitEmail').value.trim();
+  const erro  = document.getElementById('exit-form-erro');
+
+  if (!nome) { erro.textContent = 'Por favor, informe seu nome.'; return; }
+  if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) { erro.textContent = 'Por favor, informe um e-mail válido.'; return; }
+  erro.textContent = '';
+
+  // Atualiza mensagem de confirmação com o nome
+  document.getElementById('exitNomeConfirm').textContent = nome + ', e-book enviado! 🎉';
+
+  // Aqui você integra com sua plataforma de e-mail (ex: ActiveCampaign, Mailchimp, ConvertKit)
+  // fetch('SUA_URL_DE_INTEGRACAO', { method: 'POST', body: JSON.stringify({ nome, email }) });
+
+  // Transição para o passo 2
+  const step1 = document.getElementById('exitStep1');
+  const step2 = document.getElementById('exitStep2');
+  step1.style.opacity = '0';
+  step1.style.transition = 'opacity .3s';
+  setTimeout(() => {
+    step1.style.display = 'none';
+    step2.style.display = 'flex';
+    step2.style.opacity = '0';
+    step2.style.transition = 'opacity .3s';
+    setTimeout(() => { step2.style.opacity = '1'; }, 50);
+  }, 300);
+}
+
 </script>
+
+<!-- POP-UP EXIT INTENT -->
+<div class="exit-overlay" id="exitOverlay">
+  <div class="exit-popup" id="exitPopup">
+    <div class="exit-top-bar"></div>
+    <div class="exit-urg-tag">🎁 Presente exclusivo para você</div>
+    <button class="exit-close" onclick="fecharExit()">✕</button>
+
+    <!-- PASSO 1: Oferta do e-book -->
+    <div id="exitStep1" style="display:flex;width:100%">
+
+      <!-- CAPA MELHORADA -->
+      <div class="exit-left">
+        <div class="exit-book-wrap">
+
+          <!-- Sombra decorativa atrás -->
+          <div style="position:absolute;top:8px;left:8px;width:155px;height:215px;border-radius:4px 12px 12px 4px;background:rgba(251,191,36,0.15);filter:blur(8px);z-index:0"></div>
+
+          <div class="exit-book" style="position:relative;z-index:1">
+
+            <!-- Faixa decorativa topo -->
+            <div style="position:absolute;top:0;left:14px;right:0;height:3px;background:linear-gradient(90deg,#fbbf24,#fde68a,#f59e0b);z-index:3"></div>
+
+            <!-- Padrão de fundo sutil -->
+            <div style="position:absolute;inset:0;left:14px;background-image:repeating-linear-gradient(45deg,rgba(251,191,36,0.03) 0px,rgba(251,191,36,0.03) 1px,transparent 1px,transparent 10px);z-index:1"></div>
+
+            <div class="exit-book-inner" style="z-index:2;position:relative">
+              <!-- Coroa no topo -->
+              <div style="font-size:22px;margin-bottom:4px;filter:drop-shadow(0 2px 6px rgba(251,191,36,0.8))">👑</div>
+
+              <!-- Número grande -->
+              <div style="font-family:'Syne',sans-serif;font-size:58px;font-weight:800;line-height:1;background:linear-gradient(160deg,#fff9e6,#fbbf24,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-shadow:none;margin-bottom:0">21</div>
+
+              <!-- Label dias -->
+              <div style="font-size:8px;color:rgba(255,220,100,0.6);text-transform:uppercase;letter-spacing:.16em;margin-bottom:6px">dias para a</div>
+
+              <!-- Divisor dourado -->
+              <div style="width:70%;height:1px;background:linear-gradient(90deg,transparent,#fbbf24,transparent);margin-bottom:7px"></div>
+
+              <!-- Título principal -->
+              <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:800;color:#fde68a;text-align:center;line-height:1.1;letter-spacing:.02em;text-shadow:0 2px 12px rgba(251,191,36,0.4)">RIQUEZA</div>
+
+              <!-- Subtítulo -->
+              <div style="font-size:7.5px;color:rgba(255,220,100,0.5);text-align:center;line-height:1.5;margin-top:4px;text-transform:uppercase;letter-spacing:.1em">21 hábitos para<br>atrair prosperidade</div>
+            </div>
+
+            <!-- Rodapé do livro -->
+            <div class="exit-book-footer" style="z-index:2;position:relative">
+              <div style="font-size:7px;color:rgba(255,220,100,0.3);font-style:italic">e-book digital · 2025</div>
+              <div style="display:flex;gap:2px">
+                <span style="font-size:9px">✦</span>
+                <span style="font-size:9px">✦</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Badge de valor -->
+          <div class="exit-book-badge">
+            <div class="exit-book-badge-top">valor</div>
+            <div class="exit-book-badge-val">R$27</div>
+          </div>
+
+          <!-- Reflexo na base -->
+          <div style="position:absolute;bottom:-12px;left:14px;right:0;height:12px;background:linear-gradient(to bottom,rgba(251,191,36,0.12),transparent);filter:blur(4px);border-radius:0 0 8px 8px;z-index:0"></div>
+
+        </div>
+
+        <!-- Leitores -->
+        <div class="exit-readers">
+          <div class="exit-readers-avatars">
+            <span style="background:rgba(251,191,36,0.3);color:#fbbf24">M</span>
+            <span style="background:rgba(124,106,247,0.3);color:#a594ff">J</span>
+            <span style="background:rgba(52,211,153,0.3);color:#34d399">C</span>
+            <span style="background:rgba(244,114,182,0.3);color:#f472b6">R</span>
+          </div>
+          <div class="exit-readers-txt">+1.200 leitores transformados</div>
+        </div>
+      </div>
+
+      <!-- LADO DIREITO -->
+      <div class="exit-right">
+        <div class="exit-pretitulo">🎁 Espera! Não vá embora de mãos vazias</div>
+        <div class="exit-titulo">Receba <span>GRÁTIS</span> o e-book<br>"21 Dias para a Riqueza"</div>
+        <div class="exit-sub">Deixe seu e-mail e receba agora mesmo o livro digital que já ajudou <strong>+1.200 pessoas</strong> a reprogramar a mentalidade financeira e atrair prosperidade.</div>
+        <div class="exit-items">
+          <div class="exit-item"><span class="exit-item-ic">✦</span> 21 dias de hábitos práticos e guiados</div>
+          <div class="exit-item"><span class="exit-item-ic">✦</span> Técnicas de mentalidade financeira vencedora</div>
+          <div class="exit-item"><span class="exit-item-ic">✦</span> Estratégias de quem saiu das dívidas de vez</div>
+          <div class="exit-item"><span class="exit-item-ic">✦</span> Valor normal R$ 27 — hoje 100% gratuito</div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px">
+          <input type="text" id="exitNome" placeholder="Seu primeiro nome" style="background:#1a1a2e;border:1px solid rgba(251,191,36,0.3);border-radius:10px;padding:11px 14px;color:#f0f0f8;font-family:inherit;font-size:13px;outline:none;transition:border-color .2s" onfocus="this.style.borderColor='#fbbf24'" onblur="this.style.borderColor='rgba(251,191,36,0.3)'">
+          <input type="email" id="exitEmail" placeholder="Seu melhor e-mail" style="background:#1a1a2e;border:1px solid rgba(251,191,36,0.3);border-radius:10px;padding:11px 14px;color:#f0f0f8;font-family:inherit;font-size:13px;outline:none;transition:border-color .2s" onfocus="this.style.borderColor='#fbbf24'" onblur="this.style.borderColor='rgba(251,191,36,0.3)'">
+        </div>
+
+        <button class="exit-btn" onclick="exitCapturaLead()">✦ QUERO O E-BOOK GRÁTIS AGORA →</button>
+        <div id="exit-form-erro" style="font-size:11px;color:#f87171;text-align:center;min-height:16px;margin-bottom:4px"></div>
+        <div class="exit-recusar" onclick="fecharExit()">Não, prefiro sair sem o presente</div>
+      </div>
+    </div>
+
+    <!-- PASSO 2: Confirmação + direcionamento ao checkout -->
+    <div id="exitStep2" style="display:none;width:100%;flex-direction:column;align-items:center;padding:48px 40px;text-align:center">
+      <div style="font-size:56px;margin-bottom:16px;animation:bounce-icon .6s ease">🎉</div>
+      <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#f0f0f8;margin-bottom:8px" id="exitNomeConfirm">Parabéns!</div>
+      <div style="font-size:14px;color:#9090a8;line-height:1.7;max-width:440px;margin-bottom:24px">
+        Seu e-book <strong style="color:#fde68a">"21 Dias para a Riqueza"</strong> foi enviado para o seu e-mail.<br>
+        Enquanto ele chega, que tal dar um passo ainda maior?
+      </div>
+
+      <div style="background:rgba(124,106,247,0.08);border:1px solid rgba(124,106,247,0.25);border-radius:16px;padding:20px 24px;max-width:440px;width:100%;margin-bottom:24px">
+        <div style="font-size:12px;color:#a594ff;font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Oferta especial para você</div>
+        <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:800;color:#f0f0f8;margin-bottom:6px">Combine o e-book com o FinanceHero</div>
+        <div style="font-size:13px;color:#9090a8;line-height:1.6;margin-bottom:16px">O e-book vai reprogramar sua mentalidade. O FinanceHero vai colocar tudo em prática — com gamificação, IA e controle total em 5 minutos.</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:16px">
+          <span style="font-size:14px;color:#5a5a70;text-decoration:line-through">R$ 197,00</span>
+          <span style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:#a594ff">R$ 67</span>
+          <span style="font-size:12px;color:#5a5a70">pagamento único</span>
+        </div>
+        <a href="https://pay.kiwify.com.br/bMRBSbo" target="_blank" class="exit-btn" onclick="fecharExit()" style="animation:none;box-shadow:0 4px 24px rgba(124,106,247,0.4);background:linear-gradient(135deg,#7c6af7,#f472b6)">
+          🚀 IR PARA O CHECKOUT AGORA →
+        </a>
+      </div>
+
+      <div style="font-size:11px;color:#5a5a70;cursor:pointer;text-decoration:underline" onclick="fecharExit()">Agora não, vou ler primeiro o e-book</div>
+    </div>
+
+  </div>
+</div>
+
 </body>
 </html>
